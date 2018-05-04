@@ -6,12 +6,12 @@ FactoryBot.define do
   factory :response, class: FakeResponse do
     skip_create
 
-    trait :object do
-      body { { "id": 1 } }
+    trait :location do
+      body { { "latitude": 1, "longitude": 1 } }
     end
 
-    trait :invalid_object do
-      body { { "id": "1" } }
+    trait :invalid_location do
+      body { { "latitude": "1", "longitude": "1" } }
     end
 
     initialize_with do
@@ -32,21 +32,26 @@ FactoryBot.define do
       json { "" }
     end
 
-    trait :object do
+    trait :location do
       json do
         {
           "id": "file:/#{name}.json#",
           "description": "An object containing some #{name} data",
           "type": "object",
-          "required": ["id"],
+          "required": ["latitude", "longitude"],
           "properties": {
-            "id": { "type": "integer" },
+            "latitude": {
+              "type": "number",
+            },
+            "longitude": {
+              "type": "number",
+            },
           },
           "additionalProperties": false,
         }
       end
     end
-    trait(:objects) { object }
+    trait(:locations) { location }
 
     trait :array_of do
       initialize_with do
@@ -60,8 +65,8 @@ FactoryBot.define do
       end
     end
 
-    trait :referencing_objects do
-      association :items, factory: [:schema, :object]
+    trait :referencing_locations do
+      association :items, factory: [:schema, :location]
 
       initialize_with do
         FakeSchema.new(name, {
@@ -73,8 +78,8 @@ FactoryBot.define do
     end
 
     trait :referencing_definitions do
-      association :items, factory: [:schema, :object], name: "object"
-      association :example, factory: [:response, :object]
+      association :items, factory: [:schema, :location], name: "location"
+      association :example, factory: [:response, :location]
 
       transient do
         plural { items.name.pluralize }

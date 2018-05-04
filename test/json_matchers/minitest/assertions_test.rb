@@ -21,15 +21,15 @@ class AssertResponseMatchesSchemaTest < JsonMatchers::TestCase
   end
 
   test "fails when the body contains a property with the wrong type" do
-    schema = create(:schema, :object)
+    schema = create(:schema, :location)
 
-    json = build(:response, :invalid_object)
+    json = build(:response, :invalid_location)
 
     refute_matches_json_schema(json, schema)
   end
 
   test "fails when the body is missing a required property" do
-    schema = create(:schema, :object)
+    schema = create(:schema, :location)
 
     json = build(:response, {})
 
@@ -37,18 +37,18 @@ class AssertResponseMatchesSchemaTest < JsonMatchers::TestCase
   end
 
   test "when passed a Hash, validates that the schema matches" do
-    schema = create(:schema, :object)
+    schema = create(:schema, :location)
 
-    json = build(:response, :object)
+    json = build(:response, :location)
     json_as_hash = json.to_h
 
     assert_matches_json_schema(json_as_hash, schema)
   end
 
   test "when passed a Hash, fails with message when negated" do
-    schema = create(:schema, :object)
+    schema = create(:schema, :location)
 
-    json = build(:response, :invalid_object)
+    json = build(:response, :invalid_location)
     json_as_hash = json.to_h
 
     assert_raises_error_containing(schema) do
@@ -57,27 +57,27 @@ class AssertResponseMatchesSchemaTest < JsonMatchers::TestCase
   end
 
   test "when passed a Array, validates a root-level Array in the JSON" do
-    schema = create(:schema, :array_of, :objects)
+    schema = create(:schema, :array_of, :locations)
 
-    json = build(:response, :object)
+    json = build(:response, :location)
     json_as_array = [json.to_h]
 
     assert_matches_json_schema(json_as_array, schema)
   end
 
   test "when passed a Array, refutes a root-level Array in the JSON" do
-    schema = create(:schema, :array_of, :objects)
+    schema = create(:schema, :array_of, :locations)
 
-    json = build(:response, :invalid_object)
+    json = build(:response, :invalid_location)
     json_as_array = [json.to_h]
 
     refute_matches_json_schema(json_as_array, schema)
   end
 
   test "when passed a Array, fails with message when negated" do
-    schema = create(:schema, :array_of, :object)
+    schema = create(:schema, :array_of, :location)
 
-    json = build(:response, :invalid_object)
+    json = build(:response, :invalid_location)
     json_as_array = [json.to_h]
 
     assert_raises_error_containing(schema) do
@@ -86,18 +86,18 @@ class AssertResponseMatchesSchemaTest < JsonMatchers::TestCase
   end
 
   test "when JSON is a string, validates that the schema matches" do
-    schema = create(:schema, :object)
+    schema = create(:schema, :location)
 
-    json = build(:response, :object)
+    json = build(:response, :location)
     json_as_string = json.to_json
 
     assert_matches_json_schema(json_as_string, schema)
   end
 
   test "when JSON is a string, fails with message when negated" do
-    schema = create(:schema, :object)
+    schema = create(:schema, :location)
 
-    json = build(:response, :invalid_object)
+    json = build(:response, :invalid_location)
     json_as_string = json.to_json
 
     assert_raises_error_containing(schema) do
@@ -106,9 +106,9 @@ class AssertResponseMatchesSchemaTest < JsonMatchers::TestCase
   end
 
   test "the failure message contains the body" do
-    schema = create(:schema, :object)
+    schema = create(:schema, :location)
 
-    json = build(:response, :invalid_object)
+    json = build(:response, :invalid_location)
 
     assert_raises_error_containing(json) do
       assert_matches_json_schema(json, schema)
@@ -116,9 +116,9 @@ class AssertResponseMatchesSchemaTest < JsonMatchers::TestCase
   end
 
   test "the failure message contains the schema" do
-    schema = create(:schema, :object)
+    schema = create(:schema, :location)
 
-    json = build(:response, :invalid_object)
+    json = build(:response, :invalid_location)
 
     assert_raises_error_containing(schema) do
       assert_matches_json_schema(json, schema)
@@ -126,9 +126,9 @@ class AssertResponseMatchesSchemaTest < JsonMatchers::TestCase
   end
 
   test "the failure message when negated, contains the body" do
-    schema = create(:schema, :object)
+    schema = create(:schema, :location)
 
-    json = build(:response, :object)
+    json = build(:response, :location)
 
     assert_raises_error_containing(json) do
       refute_matches_json_schema(json, schema)
@@ -136,9 +136,9 @@ class AssertResponseMatchesSchemaTest < JsonMatchers::TestCase
   end
 
   test "the failure message when negated, contains the schema" do
-    schema = create(:schema, :object)
+    schema = create(:schema, :location)
 
-    json = build(:response, :object)
+    json = build(:response, :location)
 
     assert_raises_error_containing(schema) do
       refute_matches_json_schema(json, schema)
@@ -146,18 +146,18 @@ class AssertResponseMatchesSchemaTest < JsonMatchers::TestCase
   end
 
   test "asserts valid JSON against a schema that uses $ref" do
-    schema = create(:schema, :referencing_objects)
+    schema = create(:schema, :referencing_locations)
 
-    json = build(:response, :object)
+    json = build(:response, :location)
     json_as_array = [json.to_h]
 
     assert_matches_json_schema(json_as_array, schema)
   end
 
   test "refutes valid JSON against a schema that uses $ref" do
-    schema = create(:schema, :referencing_objects)
+    schema = create(:schema, :referencing_locations)
 
-    json = build(:response, :invalid_object)
+    json = build(:response, :invalid_location)
     json_as_array = [json.to_h]
 
     refute_matches_json_schema(json_as_array, schema)
@@ -166,8 +166,8 @@ class AssertResponseMatchesSchemaTest < JsonMatchers::TestCase
   test "validates against a schema referencing with 'definitions'" do
     schema = create(:schema, :referencing_definitions)
 
-    json = build(:response, :object)
-    json_as_hash = { "objects" => [json] }
+    json = build(:response, :location)
+    json_as_hash = { "locations" => [json] }
 
     assert_matches_json_schema(json_as_hash, schema)
   end
@@ -175,8 +175,8 @@ class AssertResponseMatchesSchemaTest < JsonMatchers::TestCase
   test "fails against a schema referencing with 'definitions'" do
     schema = create(:schema, :referencing_definitions)
 
-    json = build(:response, :invalid_object)
-    json_as_hash = { "objects" => [json] }
+    json = build(:response, :invalid_location)
+    json_as_hash = { "locations" => [json] }
 
     refute_matches_json_schema(json_as_hash, schema)
   end
